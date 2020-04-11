@@ -1,24 +1,20 @@
-<div class="container">
-  <table class="table table-striped">
-    <thead>
+<SortableTable @activeSortBy={{activeSortBy}} @sortDirection={{sortDirection}} @data={{model}} as |table|>
+  <thead>
+    <tr>
+      {{#table.th field="name"}}Name{{/table.th}}
+      {{#table.th field="confirmed"}}Confirmed{{/table.th}}
+      {{#table.th field="deaths"}}Deaths{{/table.th}}
+      {{#table.th field="recovered"}}Recovered{{/table.th}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each table.sortedData as |data|}}
       <tr>
-        <th scope="col">Country</th>
-        <th scope="col">Confirmed</th>
-        <th scope="col">Deaths</th>
-        <th scope="col">Recovered</th>
+        <td>{{data.name}}</td>
+        <td>{{data.confirmed}}</td>
+        <td>{{data.deaths}}</td>
+        <td>{{data.recovered}}</td>
       </tr>
-    </thead>
-    <tbody>
-      {{#each model as | countries |}}
-        {{#each-in countries as | name data| }}
-          <tr>
-            <th scope="row">{{name}}</th>
-            <td>{{data.confirmed}}</td>
-            <td>{{data.deaths}}</td>
-            <td>{{data.recovered}}</td>
-          </tr>
-        {{/each-in}}
-      {{/each}}
-    </tbody>
-  </table>
-</div>
+    {{/each}}
+  </tbody>
+</SortableTable>

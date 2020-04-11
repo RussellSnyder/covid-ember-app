@@ -1,0 +1,13 @@
+<th scope="col" {{on 'click' (fn @onClick @field)}}>
+  {{yield}}
+  <span class="icon">
+    {{#if (eq @field @activeSortBy)}}
+      {{#if (eq @sortDirection 'asc')}}
+        <FaIcon @icon="arrow-up" />
+      {{/if}}
+      {{#if (eq @sortDirection 'desc')}}
+        <FaIcon @icon="arrow-down" />
+      {{/if}}
+    {{/if}}
+  </span>
+</th>
