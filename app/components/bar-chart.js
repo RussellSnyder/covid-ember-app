@@ -1,8 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { select } from 'd3-selection'
-import { scaleLinear, scaleBand } from 'd3-scale'
-import { axisBottom, axisLeft } from 'd3-axis';
+import d3 from 'd3'
 import { maxBy, uniqueId, sortBy, reverse } from 'lodash';
 
 const COLOR_MAP = {
@@ -55,18 +53,18 @@ export default class BarChartComponent extends Component {
       ...data
     }));
 
-    const svg = select(element)
+    const svg = d3.select(element)
     svg.height = parseInt(svg.style('height'))
     svg.width = parseInt(svg.style('width'))
     svg.margin = {
       bottom: 100
     }
 
-    let yScale = scaleLinear()
+    let yScale = d3.scaleLinear()
       .domain([0, maxBy(data, compareBy)[compareBy]])
       .range([0, 100])
 
-    let xScale = scaleBand()
+    let xScale = d3.scaleBand()
       .domain(data.map(d => d.name))
       .range([0, 100])
       .paddingInner(0.03)
@@ -112,12 +110,12 @@ export default class BarChartComponent extends Component {
         .html(data => `${data[compareBy]}`)
 
     // left axis
-      let leftAxisScale = scaleLinear()
+      let leftAxisScale = d3.scaleLinear()
       .domain([0, maxBy(data, compareBy)[compareBy]])
       .range([svg.height - svg.margin.bottom, 0])
 
       svg.append("g")
-        .call(axisLeft(leftAxisScale))
+        .call(d3.axisLeft(leftAxisScale))
 
       svg.append("text")
         .attr("transform", "rotate(-90)")

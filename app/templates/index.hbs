@@ -21,7 +21,7 @@
   </thead>
   <tbody>
     {{#each table.sortedData as |data|}}
-      <tr>
+      <tr class="pointer" {{on "click" (fn this.goToCountryPage data.name)}}>
         <td>{{data.name}}</td>
         <td>{{data.confirmed}}</td>
         <td>{{data.deaths}}</td>
