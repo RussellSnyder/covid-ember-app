@@ -3,11 +3,11 @@
 </div>
 
 <div class="row mb-5">
-  <BarChart @data={{model}} @compareBy="confirmed" @threshold="1000"/>
+  <BarChart @data={{model}} @compareBy="confirmed" @threshold="5000"/>
 </div>
 
 <div class="row mb-5">
-  <BarChart @data={{model}} @compareBy="recovered" @threshold="300"/>
+  <BarChart @data={{model}} @compareBy="recovered" @threshold="1000"/>
 </div>
 
 <SortableTable @activeSortBy={{activeSortBy}} @sortDirection={{sortDirection}} @data={{model}} as |table|>

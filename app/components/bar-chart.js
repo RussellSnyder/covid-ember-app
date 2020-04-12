@@ -11,6 +11,16 @@ const COLOR_MAP = {
   recovered: 'green'
 }
 
+const showToolTip = (id) => {
+  const toolTip = document.getElementById(`tooltip-${id}`);
+  toolTip.style.opacity = 1;
+}
+
+const hideToolTip = (id) => {
+  const toolTip = document.getElementById(`tooltip-${id}`);
+  toolTip.style.opacity = 0;
+}
+
 export default class BarChartComponent extends Component {
   @action
   renderGraph(element) {
@@ -32,7 +42,7 @@ export default class BarChartComponent extends Component {
 
     // just for testing
     if (this.args.threshold) {
-      data = data.filter(data => data.deaths > this.args.threshold);
+      data = data.filter(data => data[compareBy] > this.args.threshold);
     }
 
     // sort by compareBy
@@ -61,9 +71,15 @@ export default class BarChartComponent extends Component {
       .range([0, 100])
       .paddingInner(0.03)
 
-    svg.selectAll('rect').data(data)
+    const g = svg.selectAll('g').data(data)
       .enter()
-      .append('rect')
+      .append('g')
+      .on("mouseover", (data) => showToolTip(data.id))
+      .on("mouseout", (data) => hideToolTip(data.id));
+
+
+    // bars
+    g.append('rect')
       .attr('id', (data) => `rect-${data.id}`)  
       .attr('fill', COLOR_MAP[this.args.compareBy])
       .attr('width', `${xScale.bandwidth()}%`)  
@@ -71,20 +87,29 @@ export default class BarChartComponent extends Component {
       .attr('x', (data) => `${xScale(data.name)}%`)
       .attr('y', (data) => `${100 - yScale(data[compareBy])}%`)
 
-      svg.selectAll('svg').data(data)
-      .enter()
-      .append('svg')
+      // country label
+    g.append('svg')
       .attr('class', 'country-text')
-      // .attr('fill', 'none')
       .attr('width', `${xScale.bandwidth()}%`)  
       .attr('height', (data) => `${yScale(data[compareBy])}%`)
       .attr('x', (data) => `${xScale(data.name)}%`)
-      .attr('y', (data) => `${svg.height - 90}px`)
+      .attr('y', `${svg.height - 90}px`)
       .append('text')
       .attr('transform', 'rotate(90)')
       .attr('alignment-baseline', "middle")
       .html(data => `${data.name}`)
-      .attr('y', `-${svg.width * xScale.bandwidth() / 100 / 2}px`)
+      .attr('y', `-${svg.width * xScale.bandwidth() / 100 / 2}px`);
+
+      // tooltips
+    g.append('svg')
+        .attr('class', 'bar-graph__tooltip')
+        .attr('id', (data) => `tooltip-${data.id}`)
+        .attr('opacity', 0)
+        .attr('height', 20)
+        .attr('x', (data) => `${xScale(data.name)}%`)
+        .attr('y', (data) => `${100 - yScale(data[compareBy])}%`)
+        .append('text')
+        .html(data => `${data[compareBy]}`)
 
     // left axis
       let leftAxisScale = scaleLinear()
@@ -93,13 +118,11 @@ export default class BarChartComponent extends Component {
 
       svg.append("g")
         .call(axisLeft(leftAxisScale))
-        .attr("y", -15)
 
       svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", -75)
-        .attr("x",0 - (svg.height / 2))
-        // .attr("dy", "1em")
-        .style("text-anchor", "center")
+        .attr("x", 0 - (svg.height / 2))
+        .attr("dy", "-3.5rem")
+        .style("text-anchor", "middle")
         .text(compareBy);            }
 }
