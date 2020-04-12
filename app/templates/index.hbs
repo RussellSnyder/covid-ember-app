@@ -1,5 +1,13 @@
 <div class="row mb-5">
-  <BarChart @data={{model}} @compareBy="deaths"/>
+  <BarChart @data={{model}} @compareBy="deaths" @threshold="300"/>
+</div>
+
+<div class="row mb-5">
+  <BarChart @data={{model}} @compareBy="confirmed" @threshold="1000"/>
+</div>
+
+<div class="row mb-5">
+  <BarChart @data={{model}} @compareBy="recovered" @threshold="300"/>
 </div>
 
 <SortableTable @activeSortBy={{activeSortBy}} @sortDirection={{sortDirection}} @data={{model}} as |table|>

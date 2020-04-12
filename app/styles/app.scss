@@ -4,3 +4,11 @@
 .pointer {
   cursor: pointer;
 }
+
+.bar-graph {
+  overflow: visible;
+  padding-bottom: 100px;
+  .country-text {
+    overflow: visible;
+  }
+}
