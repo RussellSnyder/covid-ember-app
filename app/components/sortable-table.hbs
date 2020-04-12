@@ -1,5 +1,5 @@
 <BsButton @onClick={{action "reset"}}>reset</BsButton>  
-<table class="table table-striped">
+<table class="table table-hover">
   {{yield (hash
     th=(component "sortable-table/header-cell" onClick=(action "sort") sortDirection=sortDirection activeSortBy=activeSortBy)
     sortedData=sortedData

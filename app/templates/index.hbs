@@ -1,3 +1,7 @@
+<div class="row mb-5">
+  <BarChart @data={{model}} @compareBy="deaths"/>
+</div>
+
 <SortableTable @activeSortBy={{activeSortBy}} @sortDirection={{sortDirection}} @data={{model}} as |table|>
   <thead>
     <tr>

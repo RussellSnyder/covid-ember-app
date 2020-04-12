@@ -17,7 +17,7 @@ export default class SortableTableComponent extends Component {
   get sortedData() {
     const data = [];
     let id = 0;
-    forEach(this.args.data[0], (value, key) => {
+    forEach(this.args.data, (value, key) => {
       id++
       data.push({
         id,
