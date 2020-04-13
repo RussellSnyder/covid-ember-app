@@ -1,6 +1,6 @@
 import Route from '@ember/routing/route';
 import fetch from 'fetch';
-import config from '../../config/environment'
+import config from 'corona-data/config/environment'
 
 export default class CountryRoute extends Route {
   async model(params) {
