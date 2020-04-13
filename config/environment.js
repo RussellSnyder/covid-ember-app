@@ -24,6 +24,8 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
+    ENV.API_ENPOINT = 'http://127.0.0.1:3000';
+
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -45,6 +47,7 @@ module.exports = function(environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
+    ENV.API_ENPOINT = 'https://rapid-api-corona.herokuapp.com';
   }
 
   return ENV;
