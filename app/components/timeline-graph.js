@@ -3,67 +3,83 @@ import { action } from '@ember/object'
 import d3 from 'd3'
 import { maxBy, uniqueId, sortBy, reverse } from 'lodash';
 
+
+const showToolTip = (x, y, text) => {
+  const tooltip = document.getElementById("timeline-graph__tooltip")
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y - 20}px`;
+  tooltip.style.opacity = 1
+  tooltip.innerText = text
+}
+
 export default class TimelineGraphComponent extends Component {
   @action
   renderGraph(element) {
-    const { data } = this.args;
+    let { data, displayData } = this.args;
 
     const svg = d3.select(element)
-    const margin = {top: 50, right: 50, bottom: 50, left: 50}
-    const height = parseInt(svg.style('height')) - margin.left - margin.right
-    const width = parseInt(svg.style('width')) - margin.left - margin.right
+    const margin = {top: 20, right: 30, bottom: 20, left: 20}
+    const height = parseInt(svg.style('height'))
+    const width = parseInt(svg.style('width'))
 
-    const n = Object.keys(data).length
+    // turn into array
+    data = Object.keys(data).map((key) => {
+      return {
+        ...data[key],
+        date: key
+      }
+    })
 
-    var xScale = d3.scaleLinear()
-      .domain([0, n-1]) // input
-      .range([0, width]); // output
+    let xScale = d3.scaleBand()
+      .domain(data.map((d, i) => i))
+      .range([margin.left, width - margin.right])
+    
+    const maxY = Math.max.apply(Math, data.map(function(d) { 
+      return d[displayData];
+    }))
 
-    var yScale = d3.scaleLinear()
-      .domain([0, 1]) // input 
-      .range([height, 0]); // output 
+    const yScale = d3.scaleLinear()
+    .domain([0, maxY])
+    .range([height - margin.bottom, margin.top])
 
     var graphLine = d3.line()
-      .x(function(d, i) { return xScale(i); }) // set the x values for the line generator
-      .y(function(d) { return yScale(d.y); }) // set the y values for the line generator 
-      .curve(d3.curveMonotoneX) // apply smoothing to the line
-  
-    var dataset = d3.range(n).map(d => ({"y": d3.randomUniform(1)() }))
+      .x((d, i) => {
+        return xScale(i) + margin.left
+      })
+      .y((d) => {
+        return yScale(d[displayData])
+      }) 
+      .curve(d3.curveMonotoneX)
 
-    svg.append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("width", "100%")
+        .attr("transform", `translate(7, ${height - margin.bottom})`)
+        .call(d3.axisBottom(xScale))
 
-// 3. Call the x axis in a group tag
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale)); // Create an axis component with axisBottom
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(yScale)); // Create an axis component with axisLeft
 
-// 4. Call the y axis in a group tag
-svg.append("g")
-    .attr("class", "y axis")
-    .call(d3.axisLeft(yScale)); // Create an axis component with axisLeft
+    svg.append("path")
+        .datum(data) // 10. Binds data to the line 
+        .attr("class", "line") // Assign a class for styling 
+        .attr("d", graphLine); // 11. Calls the line generator 
 
-// 9. Append the path, bind the data, and call the line generator 
-svg.append("path")
-    .datum(dataset) // 10. Binds data to the line 
-    .attr("class", "line") // Assign a class for styling 
-    .attr("d", graphLine); // 11. Calls the line generator 
-
-// 12. Appends a circle for each datapoint 
-svg.selectAll(".dot")
-    .data(dataset)
-    .enter()
-    .append("circle") // Uses the enter().append() method
-    .attr("class", "dot") // Assign a class for styling
-    .attr("cx", function(d, i) { return xScale(i) })
-    .attr("cy", function(d) { return yScale(d.y) })
-    .attr("r", 5)
-      .on("mouseover", function(a, b, c) { 
-        console.log(a, b, c) 
-    })
+    svg.selectAll(".dot")
+        .data(data)
+        .enter()
+        .append("circle") // Uses the enter().append() method
+        .attr("class", "dot") // Assign a class for styling
+        .attr("cx", function(d, i) { return xScale(i) + margin.left })
+        .attr("cy", function(d) { return yScale(d[displayData]) })
+        .attr("r", 5)
+        .on("mouseover", function(d, b, c) { 
+          const text = d[displayData];
+          const circle = c[b]
+          const {x, y} = circle.getBoundingClientRect()
+          showToolTip(x, y, text)
+        })
   }
 }

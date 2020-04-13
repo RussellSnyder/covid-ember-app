@@ -46,7 +46,6 @@ export default class BarChartComponent extends Component {
     // sort by compareBy
     data = reverse(sortBy(data, compareBy))
 
-
     // add ids for more complex functionality
     data = data.map(data => ({
       id: `${data.name.split(' ').join().toLowerCase()}-${uniqueId()}`,

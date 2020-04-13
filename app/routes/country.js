@@ -3,18 +3,12 @@ import fetch from 'fetch';
 import { action } from '@ember/object';
 
 export default class CountryRoute extends Route {
-  @action
-  setupController(controller, model) {
-    controller.set('model', model);
-  }
-
-
-  model(params) {
+  async model(params) {
     const { country_name: countryName } = params
 
-    return fetch(`/api/country/${countryName}`).then(function(response) {
-      return response.json();
-    });
+    const response = await fetch(`/api/country/${countryName}`);
+    const data = await response.json();
+    return { data, countryName }
   }
 
   @action

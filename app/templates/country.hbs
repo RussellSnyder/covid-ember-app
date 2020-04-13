@@ -1,3 +1,4 @@
 <div class="country">
-  <TimelineGraph @data={{model}} />
+  <h2>{{model.countryName}} - Total Deaths</h2>
+  <TimelineGraph @data={{model.data}} @displayData="total_deaths" />
 </div>
